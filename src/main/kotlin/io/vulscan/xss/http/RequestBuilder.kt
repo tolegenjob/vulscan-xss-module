@@ -59,7 +59,7 @@ object RequestBuilder {
     private fun jsonBody(endpoint: EndpointRef, target: ParameterRef, value: String): String {
         val root = LinkedHashMap<String, Any>()
         for (p in endpoint.parameters.filter { it.location == ParamLocation.BODY_JSON }) {
-            val leaf: Any = if (same(p, target)) Leaf(quote(value)) else Leaf(sampleLiteral(p.sampleValue))
+            val leaf: Leaf = if (same(p, target)) Leaf(quote(value)) else Leaf(sampleLiteral(p.sampleValue))
             insert(root, p.name.split('.').filter { it.isNotEmpty() }.ifEmpty { listOf(p.name) }, leaf)
         }
         return render(root)
