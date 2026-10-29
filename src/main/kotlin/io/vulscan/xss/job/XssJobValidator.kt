@@ -12,6 +12,10 @@ object XssJobValidator {
         if (xss.stored && !xss.reflected && xss.observeEndpointIds.isEmpty()) {
             violations += "xss.stored requires xss.observeEndpointIds"
         }
+        val known = job.endpoints.map { it.endpointId }.toSet()
+        xss.observeEndpointIds.filter { it !in known }.forEach {
+            violations += "xss.observeEndpointIds refers to an unknown endpoint $it"
+        }
         val testable = job.endpoints.any { endpoint ->
             endpoint.parameters.any { ParameterSupport.unsupportedReason(endpoint, it) == null }
         }

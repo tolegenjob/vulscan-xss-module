@@ -30,7 +30,8 @@ object TestJobs {
         url: String = "$BASE/xss/search",
         method: HttpMethod = HttpMethod.GET,
         parameters: Array<ParameterRef> = arrayOf(param("q")),
-    ) = EndpointRef(UUID.randomUUID(), method, url, true, parameters.toList())
+        idempotent: Boolean = true,
+    ) = EndpointRef(UUID.randomUUID(), method, url, idempotent, parameters.toList())
 
     fun param(name: String, location: ParamLocation = ParamLocation.QUERY, sample: String? = "test") = ParameterRef(name, location, sample)
 

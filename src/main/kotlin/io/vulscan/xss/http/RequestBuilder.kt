@@ -30,11 +30,15 @@ object RequestBuilder {
         }
     }
 
+    /** Обычный запрос страницы без проб: все параметры получают значения из примеров. */
+    fun buildPlain(endpoint: EndpointRef): ProbeRequest =
+        ProbeRequest(endpoint.method, buildUrl(endpoint, null, ""), mapOf("Accept" to ACCEPT))
+
     private val SUPPORTED = setOf(ParamLocation.QUERY, ParamLocation.BODY_FORM, ParamLocation.BODY_JSON, ParamLocation.PATH)
 
-    private fun same(a: ParameterRef, b: ParameterRef) = a.name == b.name && a.location == b.location
+    private fun same(a: ParameterRef, b: ParameterRef?) = b != null && a.name == b.name && a.location == b.location
 
-    private fun buildUrl(endpoint: EndpointRef, target: ParameterRef, value: String): String {
+    private fun buildUrl(endpoint: EndpointRef, target: ParameterRef?, value: String): String {
         var raw = endpoint.url
         for (p in endpoint.parameters.filter { it.location == ParamLocation.PATH }) {
             val replacement = if (same(p, target)) value else (p.sampleValue ?: "1")

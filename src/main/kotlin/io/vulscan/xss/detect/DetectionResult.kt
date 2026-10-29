@@ -1,5 +1,6 @@
 package io.vulscan.xss.detect
 
+import io.vulscan.kit.contracts.EndpointRef
 import io.vulscan.kit.net.ProbeRequest
 import io.vulscan.kit.net.ProbeResponse
 import io.vulscan.xss.analysis.ReflectionPoint
@@ -8,7 +9,7 @@ import io.vulscan.xss.plan.ProbeTarget
 /** L0 — не отражается, L1 — отражается, но обезврежено, L2 — символы выживают, L3 — доказана структура. */
 enum class Level { NOT_REFLECTED, NEUTRALISED, SURVIVES, STRUCTURE }
 
-enum class InconclusiveReason { UNSTABLE, RATE_LIMITED, TARGET_ERROR, UNKNOWN_CONTEXT }
+enum class InconclusiveReason { UNSTABLE, RATE_LIMITED, TARGET_ERROR, UNKNOWN_CONTEXT, WRITE_REJECTED }
 
 class Exchange(val canary: String, val request: ProbeRequest, val response: ProbeResponse, val body: String)
 
@@ -26,6 +27,9 @@ class DetectionResult(
     val note: String? = null,
     /** Отражение подтверждено повторным запросом. */
     val stableReflection: Boolean = false,
+    /** Страница наблюдения, на которой найдено сохранённое значение (только stored XSS). */
+    val observeEndpoint: EndpointRef? = null,
+    val writesPerformed: Int = 0,
 ) {
     val isFinding: Boolean get() = inconclusive == null && (level == Level.SURVIVES || level == Level.STRUCTURE)
 }

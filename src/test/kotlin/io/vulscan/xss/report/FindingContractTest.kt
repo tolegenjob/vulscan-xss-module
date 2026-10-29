@@ -63,4 +63,19 @@ class FindingContractTest {
         val result = detect(url = endpoint.url, app = FakeApp.reflecting { "<p>$it</p>" })
         assertThat(errors(XssFindingFactory.create(result))).isEmpty()
     }
+
+    @Test
+    fun `stored finding conforms to the schema`() {
+        val source = io.vulscan.xss.stored.Guestbook.source()
+        val page = io.vulscan.xss.stored.Guestbook.page()
+        val run = io.vulscan.xss.TestRun(
+            TestJobs.job(source, page, options = io.vulscan.xss.stored.Guestbook.options(page)),
+            io.vulscan.xss.stored.Guestbook { it }.app,
+        )
+        val sender = io.vulscan.xss.detect.ProbeSender(run.http) { }
+        val result = io.vulscan.xss.stored.StoredXssDetector(io.vulscan.xss.canary.CanaryRegistry(), io.vulscan.xss.stored.WriteBudget(), sender)
+            .detect(io.vulscan.xss.plan.ProbeTarget(source, source.parameters.first()), listOf(page))
+        assertThat(result.isFinding).isTrue()
+        assertThat(errors(XssFindingFactory.create(result))).isEmpty()
+    }
 }
