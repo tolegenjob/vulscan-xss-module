@@ -33,7 +33,7 @@ class ReflectedXssDetectorTest {
         return List(runs) { detector.detect(target) }
     }
 
-    private fun one(app: (ProbeRequest) -> ProbeResponse, repeat: Boolean = true) = detect(app, repeat).single()
+    private fun one(app: (ProbeRequest) -> ProbeResponse) = detect(app).single()
 
     @Test
     fun `value that is not reflected costs a single request`() {
