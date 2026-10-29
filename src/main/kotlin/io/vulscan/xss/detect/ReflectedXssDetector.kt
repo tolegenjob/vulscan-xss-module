@@ -118,7 +118,7 @@ class ReflectedXssDetector(
                 return DetectionResult(
                     target, Level.STRUCTURE, point = choice.point, surviving = choice.surviving, probe = choice.probe,
                     evidence = proof, mitigations = Mitigations.of(proof.response.headers),
-                    reflectionCount = reflections.size, requestsUsed = s.used,
+                    reflectionCount = reflections.size, requestsUsed = s.used, stableReflection = repeatReflectionCheck,
                 )
             }
         }
@@ -126,7 +126,7 @@ class ReflectedXssDetector(
         return DetectionResult(
             target, Level.SURVIVES, point = best.point, surviving = best.surviving, probe = best.probe,
             evidence = survival, mitigations = Mitigations.of(survival.response.headers),
-            reflectionCount = reflections.size, requestsUsed = s.used,
+            reflectionCount = reflections.size, requestsUsed = s.used, stableReflection = repeatReflectionCheck,
         )
     }
 

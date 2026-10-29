@@ -24,6 +24,8 @@ class DetectionResult(
     val reflectionCount: Int = 0,
     val requestsUsed: Int = 0,
     val note: String? = null,
+    /** Отражение подтверждено повторным запросом. */
+    val stableReflection: Boolean = false,
 ) {
     val isFinding: Boolean get() = inconclusive == null && (level == Level.SURVIVES || level == Level.STRUCTURE)
 }

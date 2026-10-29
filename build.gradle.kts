@@ -40,6 +40,7 @@ dependencies {
     testImplementation(libs.assertj.core)
     testImplementation(libs.testcontainers.kafka)
     testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.json.schema.validator)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
