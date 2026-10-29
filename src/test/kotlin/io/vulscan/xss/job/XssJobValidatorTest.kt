@@ -38,8 +38,15 @@ class XssJobValidatorTest {
 
     @Test
     fun `stored only with observation pages is valid`() {
-        val job = TestJobs.job(endpoint(), options = XssOptions(reflected = false, stored = true, observeEndpointIds = listOf(UUID.randomUUID())))
+        val page = endpoint()
+        val job = TestJobs.job(endpoint(), page, options = XssOptions(reflected = false, stored = true, observeEndpointIds = listOf(page.endpointId)))
         assertThat(XssJobValidator.validate(job)).isEmpty()
+    }
+
+    @Test
+    fun `observation page that is not part of the job is invalid`() {
+        val job = TestJobs.job(endpoint(), options = XssOptions(reflected = false, stored = true, observeEndpointIds = listOf(UUID.randomUUID())))
+        assertThat(XssJobValidator.validate(job)).anyMatch { it.contains("unknown endpoint") }
     }
 
     @Test
