@@ -14,11 +14,11 @@ class EvidenceBuilderTest {
         val e = evidence("A".repeat(900), "B".repeat(900))
         val response = e.response!!
         val excerpt = response.bodyExcerpt!!
-        assertThat(excerpt.length).isLessThanOrEqualTo(2048)
-        assertThat(excerpt).startsWith("A".repeat(200).takeLast(194))
         val h = response.highlights.first()
-        assertThat(excerpt.substring(h.start, h.end)).contains("<vsxtag id=vsx")
-        assertThat(h.start).isEqualTo(194 + 3) // 200 символов окна минус 6 символов «<p>» и т.п. проверяются ниже
+        assertThat(excerpt.substring(h.start, h.end)).startsWith("vsx").contains("<vsxtag id=vsx")
+        assertThat(h.start).isEqualTo(EvidenceBuilder.WINDOW)
+        assertThat(excerpt.length).isEqualTo(EvidenceBuilder.WINDOW + (h.end - h.start) + EvidenceBuilder.WINDOW)
+        assertThat(excerpt.substring(0, h.start)).isEqualTo("A".repeat(197) + "<p>")
     }
 
     @Test
