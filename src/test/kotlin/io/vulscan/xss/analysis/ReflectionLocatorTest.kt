@@ -17,7 +17,7 @@ class ReflectionLocatorTest {
     @Test
     fun `several occurrences in order`() {
         val body = "vsxabc<a href=\"vsxabc\">vsxabc</a>"
-        assertThat(ReflectionLocator.find(body, "vsxabc").map { it.offset }).containsExactly(0, 16, 24)
+        assertThat(ReflectionLocator.find(body, "vsxabc").map { it.offset }).containsExactly(0, 15, 23)
     }
 
     @Test
