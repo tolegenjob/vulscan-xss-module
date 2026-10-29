@@ -57,6 +57,18 @@ class HtmlLexerTest {
             arguments("<!--> <p>§</p>", HTML_TEXT),
             arguments("<p\n  class=\"a\"\n  title='§'>", ATTR_SINGLE_QUOTED),
         )
+
+        @JvmStatic
+        fun unknownFragments(): Stream<String> = Stream.of(
+            "<!DOCTYPE §",
+            "<?xml §",
+            "</div §>",
+            "<![CDATA[ § ]]>",
+            "<script>x=/\"§</script>",
+            "<script>var a=`\${b}§`;</script>",
+            "<script>/* \"§ */</script>",
+            "<script>var a = \"abc\n§\";</script>",
+        )
     }
 
     @ParameterizedTest(name = "{0} -> {1}")
@@ -88,19 +100,5 @@ class HtmlLexerTest {
     fun `unclear syntax is never classified as html text`(fragment: String) {
         val context = HtmlContextClassifier.classify(fragment.replace("§", ""), fragment.indexOf('§')).context
         assertThat(context).isNotEqualTo(HTML_TEXT)
-    }
-
-    companion object Unknown {
-        @JvmStatic
-        fun unknownFragments(): Stream<String> = Stream.of(
-            "<!DOCTYPE §",
-            "<?xml §",
-            "</div §>",
-            "<![CDATA[ § ]]>",
-            "<script>x=/\"§</script>",
-            "<script>var a=`\${b}§`;</script>",
-            "<script>/* \"§ */</script>",
-            "<script>var a = \"abc\n§\";</script>",
-        )
     }
 }
