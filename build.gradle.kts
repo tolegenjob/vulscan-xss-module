@@ -39,6 +39,7 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.assertj.core)
     testImplementation(libs.testcontainers.kafka)
+    testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
