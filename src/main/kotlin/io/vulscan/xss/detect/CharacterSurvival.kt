@@ -17,16 +17,23 @@ object CharacterSurvival {
     }
 
     /**
-     * Разбивает вхождения канарейки на кластеры (расстояние между соседними вхождениями невелико даже с HTML-кодированием),
-     * определяет контекст начала кластера и выжившие символы внутри него.
+     * Делит вхождения канарейки на кластеры — по одному на подстановку пробы. Если вхождений кратно размеру пробы
+     * ([CHARS] + 1), берутся группы подряд; иначе (значение усечено или часть пробы вырезана) — запасной вариант по расстоянию
+     * между соседними вхождениями. Затем определяется контекст начала кластера и выжившие символы внутри него.
      */
     fun analyze(body: String, canary: String): List<ClusterSurvival> {
         val offsets = ReflectionLocator.find(body, canary).map { it.offset }
         if (offsets.isEmpty()) return emptyList()
-        val clusters = mutableListOf<MutableList<Int>>()
-        for (offset in offsets) {
-            val last = clusters.lastOrNull()
-            if (last != null && offset - last.last() <= canary.length + GAP) last += offset else clusters += mutableListOf(offset)
+        val perProbe = CHARS.size + 1
+        val clusters: List<List<Int>> = if (offsets.size % perProbe == 0) {
+            offsets.chunked(perProbe)
+        } else {
+            val grouped = mutableListOf<MutableList<Int>>()
+            for (offset in offsets) {
+                val last = grouped.lastOrNull()
+                if (last != null && offset - last.last() <= canary.length + GAP) last += offset else grouped += mutableListOf(offset)
+            }
+            grouped
         }
         return clusters.map { cluster ->
             val start = cluster.first()
@@ -39,5 +46,6 @@ object CharacterSurvival {
         }
     }
 
-    private const val GAP = 12
+    /** Самый длинный разделитель между соседними канарейками внутри одной пробы (`&#x60;`). */
+    private const val GAP = 6
 }
